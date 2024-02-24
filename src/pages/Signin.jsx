@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signIn } from "../hooks/fetch.api";
+import OAuth from "../components/OAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
@@ -13,7 +14,6 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(false);
 
     try {
@@ -21,6 +21,7 @@ export default function Signup() {
 
       if (data.success === false) {
         setError(true);
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
@@ -52,6 +53,7 @@ export default function Signup() {
         >
           {loading ? "Loading..." : "Login"}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Não possui conta?</p>
