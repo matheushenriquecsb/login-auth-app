@@ -4,7 +4,6 @@ import { signUp } from "../hooks/fetch.api";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   const handleChange = (e) => {
@@ -13,17 +12,11 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(false);
 
     try {
       const data = await signUp(formData);
-
-      if (!data.success) {
-        setError(true);
-      }
     } catch (error) {
-      setLoading(false);
       setError(true);
     }
   };
@@ -53,11 +46,8 @@ export default function Signup() {
           className="bg-slate-100 p-3 rounded-lg"
           onChange={handleChange}
         />
-        <button
-          disabled={loading}
-          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
-        >
-          {loading ? "Loading..." : "Cadastre-se"}
+        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+          Cadastre-se
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -66,7 +56,9 @@ export default function Signup() {
           <span className="text-blue-500">Login</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5">{error && "Something went wrong!"}</p>
+      <p className="text-green-700 mt-5 text-center">
+        {error && "Cadastrado com sucesso!"}
+      </p>
     </div>
   );
 }
