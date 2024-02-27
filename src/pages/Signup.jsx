@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signUp } from "../hooks/fetch.api";
+import OAuth from "../components/OAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
@@ -15,7 +16,7 @@ export default function Signup() {
     setError(false);
 
     try {
-      const data = await signUp(formData);
+      await signUp(formData);
     } catch (error) {
       setError(true);
     }
@@ -49,6 +50,7 @@ export default function Signup() {
         <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
           Cadastre-se
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Já possui conta?</p>
