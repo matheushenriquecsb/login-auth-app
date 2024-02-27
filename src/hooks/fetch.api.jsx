@@ -13,7 +13,7 @@ export async function signUp(formData) {
     const data = await res.json();
     return data;
   } catch (error) {
-    throw new Error("Failed to signin", error);
+    throw new Error("Failed to signup", error);
   }
 }
 
