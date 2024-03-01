@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { signUp } from "../hooks/fetch.api";
+import signUp from "../hooks/fetch.api";
 import OAuth from "../components/OAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
+
   const [error, setError] = useState(false);
 
   const handleChange = (e) => {
@@ -14,9 +15,9 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(false);
-
     try {
-      await signUp(formData);
+      const data = await signUp(formData);
+      if (data.statusCode === 400) setError(true);
     } catch (error) {
       setError(true);
     }
@@ -58,8 +59,12 @@ export default function Signup() {
           <span className="text-blue-500">Login</span>
         </Link>
       </div>
-      <p className="text-green-700 mt-5 text-center">
-        {error && "Cadastrado com sucesso!"}
+      <p
+        className={`mt-5 text-center ${
+          error ? "text-red-700" : "text-green-700"
+        }`}
+      >
+        {error ? "Erro ao cadastrar" : ""}
       </p>
     </div>
   );
