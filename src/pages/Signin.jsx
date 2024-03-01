@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signIn } from "../hooks/fetch.api";
+import signIn from "../hooks/fetch.api";
 import {
   signInStart,
   signInFailure,
