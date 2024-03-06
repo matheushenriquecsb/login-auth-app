@@ -1,6 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase";
-import googleAuth from "../hooks/fetch.api";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function OAuth() {
   const handleGoogleClick = async () => {
@@ -10,9 +11,15 @@ export default function OAuth() {
 
       const result = await signInWithPopup(auth, provider);
 
-      await googleAuth(result);
+      await axios.post(`${BASE_URL}/google`, {
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email,
+          photo: result.user.photoURL,
+        }),
+      });
     } catch (error) {
-      console.log("could not login with google", error);
+      throw new Error("could not login with google", error);
     }
   };
 
