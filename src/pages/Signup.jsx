@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import signUp from "../hooks/fetch.api";
+import { Link, useNavigate } from "react-router-dom";
+
+import axios from "axios";
 import OAuth from "../components/OAuth";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
-
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -14,10 +18,12 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(false);
     try {
-      const data = await signUp(formData);
-      if (data.statusCode === 400) setError(true);
+      setLoading(true);
+      setError(false);
+      await axios.post(`${BASE_URL}/signup`, formData);
+      setLoading(false);
+      navigate("/sign-in");
     } catch (error) {
       setError(true);
     }
@@ -48,8 +54,11 @@ export default function Signup() {
           className="bg-slate-100 p-3 rounded-lg"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Cadastre-se
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "Loading..." : "Sign Up"}
         </button>
         <OAuth />
       </form>

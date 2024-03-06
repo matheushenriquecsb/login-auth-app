@@ -1,16 +1,19 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import signIn from "../hooks/fetch.api";
+import OAuth from "../components/OAuth";
 import {
-  signInStart,
   signInFailure,
+  signInStart,
   signInSuccess,
 } from "../redux/user/userSlice";
-import OAuth from "../components/OAuth";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
-export default function Signup() {
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+export default function SignIn() {
   const [formData, setFormData] = useState({});
+
   const { loading, error } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
@@ -21,16 +24,10 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       dispatch(signInStart());
-      const data = await signIn(formData);
-
-      if (data.success === false) {
-        dispatch(signInFailure(data));
-        return;
-      }
-      dispatch(signInSuccess(data));
+      const res = await axios.post(`${BASE_URL}/signin`, formData);
+      dispatch(signInSuccess(res.data));
       navigate("/");
     } catch (error) {
       dispatch(signInFailure(error));
