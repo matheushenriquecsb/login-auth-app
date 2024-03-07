@@ -1,7 +1,7 @@
-import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
-import { app } from "../firebase";
+import { GoogleOutlined } from "@ant-design/icons";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { app } from "../firebase";
 
 export default function OAuth() {
   const handleGoogleClick = async () => {
@@ -11,7 +11,7 @@ export default function OAuth() {
 
       const result = await signInWithPopup(auth, provider);
 
-      await axios.post(`${BASE_URL}/google`, {
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/google`, {
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
@@ -29,7 +29,7 @@ export default function OAuth() {
       onClick={handleGoogleClick}
       className="bg-red-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
     >
-      Continue with google
+      Cadastre-se com google <GoogleOutlined />
     </button>
   );
 }
