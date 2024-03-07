@@ -23,7 +23,10 @@ export default function Signup() {
     try {
       setLoading(true);
       setError(false);
-      await axios.post(`${import.meta.env.VITE_BASE_URL}/signup`, formData);
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/auth/signup`,
+        formData
+      );
       setLoading(false);
       navigate("/sign-in");
     } catch (error) {
