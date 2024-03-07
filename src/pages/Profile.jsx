@@ -1,14 +1,20 @@
-import { useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
 import {
+  InfoCircleOutlined,
+  MailOutlined,
+  UnlockOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Button, Input, Tooltip } from "antd";
+import axios from "axios";
+import {
+  getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
-  getDownloadURL,
 } from "firebase/storage";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 import {
   updateUserFailure,
   updateUserStart,
@@ -24,7 +30,15 @@ export default function Profile() {
   const [imageError, setImageError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
 
-  const { currentUser } = useSelector((state) => state.user);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  console.log(currentUser);
+  useEffect(() => {
+    if (image) {
+      handleFileUpload(image);
+    }
+  }, [image]);
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -49,12 +63,6 @@ export default function Profile() {
     );
   };
 
-  useEffect(() => {
-    if (image) {
-      handleFileUpload(image);
-    }
-  }, [image]);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -63,14 +71,11 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`http://localhost:3000/auth/update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      console.log(res);
+      const res = await axios.patch(
+        `http://localhost:3000/users/update/${currentUser.id}`,
+        formData
+      );
+      console.log(res.data);
       dispatch(updateUserSuccess(res));
       setUpdateSuccess(true);
     } catch (error) {
@@ -109,36 +114,51 @@ export default function Profile() {
             ""
           )}
         </p>
-        <input
+        <input />
+        <Input
+          placeholder="Enter your username"
           defaultValue={currentUser.username}
           type="text"
           id="username"
-          placeholder="Username"
           className="bg-slate-100 rounded-lg p-3"
           onChange={handleChange}
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          suffix={
+            <Tooltip title="Extra information">
+              <InfoCircleOutlined style={{ color: "rgba(0,0,0,.45)" }} />
+            </Tooltip>
+          }
         />
-        <input
+        <Input
+          size="large"
           defaultValue={currentUser.email}
           type="text"
           id="email"
           placeholder="email"
           className="bg-slate-100 rounded-lg p-3"
           onChange={handleChange}
+          prefix={<MailOutlined />}
         />
-        <input
+
+        <Input.Password
           type="text"
           id="password"
-          placeholder="password"
+          placeholder="input password"
           className="bg-slate-100 rounded-lg p-3"
+          visibilityToggle={{
+            visible: passwordVisible,
+            onVisibleChange: setPasswordVisible,
+          }}
           onChange={handleChange}
+          prefix={<UnlockOutlined />}
         />
         <button className="bg-slate-700 text-white p-3 rounded hover:opacity-95 disabled:opacity-80">
           Update
         </button>
       </form>
-      <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+      <div className="flex justify-between mt-5 mb-5">
+        <Button danger>Delete Account</Button>
+        <Button danger>Sign out</Button>
       </div>
     </div>
   );
