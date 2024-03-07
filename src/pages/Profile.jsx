@@ -19,6 +19,7 @@ import {
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
+  signOut,
 } from "../redux/user/userSlice";
 
 export default function Profile() {
@@ -33,7 +34,6 @@ export default function Profile() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  console.log(currentUser);
   useEffect(() => {
     if (image) {
       handleFileUpload(image);
@@ -72,7 +72,7 @@ export default function Profile() {
     try {
       dispatch(updateUserStart());
       const res = await axios.patch(
-        `http://localhost:3000/users/update/${currentUser.id}`,
+        `${import.meta.env.VITE_BASE_URL}/users/update/${currentUser.id}`,
         formData
       );
       console.log(res.data);
@@ -80,6 +80,15 @@ export default function Profile() {
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error));
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BASE_URL}/auth/signout`);
+      dispatch(signOut());
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -158,7 +167,9 @@ export default function Profile() {
       </form>
       <div className="flex justify-between mt-5 mb-5">
         <Button danger>Delete Account</Button>
-        <Button danger>Sign out</Button>
+        <Button danger onClick={handleSignOut}>
+          Sign out
+        </Button>
       </div>
     </div>
   );

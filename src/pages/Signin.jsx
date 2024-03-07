@@ -28,7 +28,7 @@ export default function SignIn() {
     try {
       dispatch(signInStart());
       const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/signin`,
+        `${import.meta.env.VITE_BASE_URL}/auth/signin`,
         formData
       );
       dispatch(signInSuccess(res.data));
@@ -38,8 +38,6 @@ export default function SignIn() {
     }
   };
 
-  console.log(error);
-
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Login</h1>
@@ -47,12 +45,14 @@ export default function SignIn() {
         <Input
           size="large"
           type="text"
+          name="email"
           id="email"
           placeholder="Email"
           className="bg-slate-100 rounded-lg p-3"
           onChange={handleChange}
         />
         <Input.Password
+          name="password"
           type="text"
           id="password"
           placeholder="Senha"
